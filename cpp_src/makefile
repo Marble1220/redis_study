@@ -1,11 +1,26 @@
-test: test.o sds.o
-	g++ sds.o test.o -o test
+#sds
 
-test.o: test.cpp
-	g++ -c test.cpp -o test.o
+# test: test.o sds.o
+# 	g++ sds.o test.o -o test
 
-sds.o: sds.cpp
-	g++ -c sds.cpp -o sds.o
+# test.o: testsds.cpp
+# 	g++ -c testsds.cpp -o test.o
+
+# sds.o: sds.cpp
+# 	g++ -c sds.cpp -o sds.o
+
+
+#intset
+
+test: test.o intset.o
+	g++ intset.o test.o -o test
+
+test.o: testintset.cpp
+	g++ -c testintset.cpp -o test.o
+
+intset.0: intset.cpp
+	g++ -c intset.cpp -o intset.o
+
 
 clean:
 	rm *.o & rm test
