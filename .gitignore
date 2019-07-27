@@ -1,0 +1,6 @@
+/cpp_src/*malloc*
+*.py
+temp*
+/test*
+/cpp_src/*.o
+/cpp_src/.fuse*
