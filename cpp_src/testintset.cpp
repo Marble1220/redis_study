@@ -88,7 +88,7 @@ int main(){
     cout << success << endl;
     test3->test();
 
-    base_struct* test4 = test3;
+    BaseStruct* test4 = test3;
 
     cout << test4->length() << endl;
 

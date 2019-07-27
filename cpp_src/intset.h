@@ -192,7 +192,7 @@ template  <typename T> class ArrayInt: public ArrayBase{
 
 
 
-class intset: public base_struct{
+class intset: public BaseStruct{
     friend int intsetmatch(void*, void*);
     private:
         ArrayBase* contents;

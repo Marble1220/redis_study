@@ -37,7 +37,7 @@ int hex_digit_to_int(char c);
 
 
 //sds类实现
-class sdshdr: public base_struct{
+class sdshdr: public BaseStruct{
     private:
         int len;
         int free;
