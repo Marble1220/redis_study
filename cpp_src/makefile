@@ -18,8 +18,10 @@ test: test.o intset.o
 test.o: testintset.cpp
 	g++ -c testintset.cpp -o test.o
 
-intset.0: intset.cpp
+intset.o: intset.cpp
 	g++ -c intset.cpp -o intset.o
+
+
 
 
 clean:

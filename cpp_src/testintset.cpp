@@ -5,6 +5,7 @@
 #include "intset.h"
 
 
+
 using namespace std;
 
 int main(){
@@ -86,5 +87,32 @@ int main(){
     test3->intsetRemove(10, &success);
     cout << success << endl;
     test3->test();
+
+    base_struct* test4 = test3;
+
+    cout << test4->length() << endl;
+
+
+    intset test5 = intset();
+    intset test6 = intset();
+    
+    if (intsetmatch(&test5, &test6)){
+        cout << "ok" << endl;
+    }
+    test5.intsetAdd(1, &success);
+    test6.intsetAdd(2, &success);
+
+    if (intsetmatch(&test5, &test6)){
+        cout << "ok" << endl;
+    }
+
+    test6.intsetSet(0, 1);
+    if (intsetmatch(&test5, &test6)){
+        cout << "ok" << endl;
+    }
+
+
+
+
     
 }

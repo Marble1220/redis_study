@@ -1,7 +1,13 @@
+#include "sys/types.h"
 
-
-class struct_base{
+class base_struct{
     public:
-    struct_base() = default;
-    
+        base_struct() = default;
+        virtual ~base_struct() = default;
+
+        virtual size_t length() const = 0;
+
+
 };
+
+

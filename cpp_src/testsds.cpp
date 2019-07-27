@@ -103,15 +103,24 @@ int main(){
     if (*test8 == *test9){
         cout << "OK" << endl;
     }
+    if (sdsmatch(test8, test9)){
+        cout << "  OK   " << endl;
+    }
+    
     *test9 += "lll";
     if (!(*test8 == *test9)){
         cout << "OK" << endl;
     }
+
     int cot = 0;
     auto test10 = sdssplitlen("ababababababababababababababab",strlen("ababababababababababababababab"), "b", strlen("b"), &cot);
     cout << cot << endl;
     for (int i = 0; i < cot; i++){
         cout << test10[i] << endl;
     }
+
+    cout << test9->length() << endl;
+    delete test9;
+
 
 }

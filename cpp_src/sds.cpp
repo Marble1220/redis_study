@@ -238,6 +238,18 @@ cleanup:
 
 }
 
+int sdsmatch(void* ptr, void* key){
+    try{
+    sdshdr* new_ptr = static_cast<sdshdr*>(ptr);
+    sdshdr* new_key = static_cast<sdshdr*>(key);
+    return (*new_key == *new_ptr);
+    }
+    catch(std::exception){
+        return 0;
+    }
+
+}
+
 sdshdr* sdsjoin(char **argv, int argc, char *sep){
     auto join = new sdshdr();
     
@@ -247,6 +259,9 @@ sdshdr* sdsjoin(char **argv, int argc, char *sep){
     }
     return join;
 }
+
+
+
 
 int is_hex_digit(char c) {
     return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') ||

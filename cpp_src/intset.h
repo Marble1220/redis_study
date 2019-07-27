@@ -8,6 +8,7 @@
 #include <iostream>
 #include <algorithm>
 
+#include "base.h"
 
 #define INTSET_ENC_INT16 (sizeof(int16_t))
 #define INTSET_ENC_INT32 (sizeof(int32_t))
@@ -62,6 +63,7 @@ class ArrayBase{
 
 template  <typename T> class ArrayInt: public ArrayBase{
     friend class intset;
+    friend int intsetmatch(void* ptr, void* key);
     private:
         typedef vector<T> v;
         v *vec;
@@ -190,7 +192,8 @@ template  <typename T> class ArrayInt: public ArrayBase{
 
 
 
-class intset{
+class intset: public base_struct{
+    friend int intsetmatch(void*, void*);
     private:
         ArrayBase* contents;
         uint32_t encoding;
@@ -198,6 +201,9 @@ class intset{
     public:
         intset(): encoding(INTSET_ENC_INT16), contents(new ArrayInt<uint16_t>()) {} ;
 
+        ~intset(){delete contents;};
+        
+        
         intset* intsetUpgrade(uint32_t newencoding){
             ArrayBase *temp;
             if (newencoding == INTSET_ENC_INT32){
@@ -287,8 +293,14 @@ class intset{
 
 
 
+
+
 };
 
+
+
+
+int intsetmatch(void*, void*);
 
 
 // class ArrayInt32: public ArrayBase{};

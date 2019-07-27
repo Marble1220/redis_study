@@ -5,6 +5,8 @@
 #include <memory>
 #include <sys/types.h>
 
+#include "base.h" 
+
 /*
  * 最大预分配长度
  */
@@ -27,7 +29,7 @@ static allocator<char> alloc;
 
 int sdsll2str(char *s, long long value);
 int sdsull2str(char *s, unsigned long long v);
-
+int sdsmatch(void*, void*);
 
 int is_hex_digit(char c);
 int hex_digit_to_int(char c);
@@ -35,7 +37,7 @@ int hex_digit_to_int(char c);
 
 
 //sds类实现
-class sdshdr{
+class sdshdr: public base_struct{
     private:
         int len;
         int free;
@@ -63,7 +65,7 @@ class sdshdr{
 
 
 
-
+        virtual size_t length() const {return len;};
         inline size_t sdslen() const {return len;};  // 返回sds实际保存字符串的长度
         inline size_t sdsavail() const {return free;}; // 返回sds剩余的可用长度
         inline char* get_buf() const {return buf;}; //返回字符串
