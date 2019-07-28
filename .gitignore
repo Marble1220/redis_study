@@ -4,3 +4,4 @@ temp*
 /test*
 /cpp_src/*.o
 /cpp_src/.fuse*
+/cpp_src/testadlist.cpp

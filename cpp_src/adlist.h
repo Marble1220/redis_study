@@ -1,6 +1,5 @@
 #ifndef __ADLIST_H__
 #define __ADLIST_H__
-#endif
 
 #include <list>
 
@@ -9,48 +8,46 @@
 
 
 using std::list;
+
+// typedef list<BaseObject*>::iterator iterator;
+
+// class adlistIter{
+//     friend class adlist;
+//     friend bool operator==(adlistIter &lhs, adlistIter &rhs);
+
+//     private:
+//         iterator iter;
+//     public:
+//         adlistIter(iterator i): iter(i){};
+
+//         adlistIter& operator++(){
+//             ++iter;
+//             return *this;
+//         }
+//         adlistIter& operator--(){
+//             --iter;
+//             return *this;
+//         }
+//         adlistIter& operator++(int){
+//             adlistIter res = *this;
+//             ++*this;
+//             return res;
+//         }
+//         adlistIter& operator--(int){
+//             adlistIter res = *this;
+//             --*this;
+//             return res;
+//         }
+
+
+//         BaseObject* operator*(){
+//             return *iter;
+//         }
+// };
+
+
+
 // 简单封装stl的list， 我寻思比我自己实现的可靠性和效率高多了
-
-typedef list<BaseObject*>::iterator iterator;
-
-class adlistIter{
-    friend class adlist;
-    friend bool operator==(adlistIter &lhs, adlistIter &rhs);
-
-    private:
-        iterator iter;
-    public:
-        adlistIter(iterator i): iter(i){};
-
-        adlistIter& operator++(){
-            ++iter;
-            return *this;
-        }
-        adlistIter& operator--(){
-            --iter;
-            return *this;
-        }
-        adlistIter& operator++(int){
-            adlistIter res = *this;
-            ++*this;
-            return res;
-        }
-        adlistIter& operator--(int){
-            adlistIter res = *this;
-            --*this;
-            return res;
-        }
-
-
-        BaseObject* operator*(){
-            return *iter;
-        }
-};
-
-bool operator==(adlistIter &lhs, adlistIter &rhs){
-    return lhs.iter == rhs.iter;
-}
-
 
 
 class adlist: public BaseStruct{
@@ -58,6 +55,7 @@ class adlist: public BaseStruct{
         list<BaseObject*> *lst;
 
     public:
+        typedef list<BaseObject*>::iterator adlistIter;
         adlist(){lst = new list<BaseObject*>;};
         ~adlist(){
             for(auto &item: *lst){
@@ -82,13 +80,13 @@ class adlist: public BaseStruct{
             if (after){
                 ++old_node;
             }
-            lst->insert(old_node.iter, value);
+            lst->insert(old_node, value);
             return this;
         }
 
         void adlistDelNode(adlistIter node){
             //  * 对节点私有值(private value of the node)的释放工作由调用者进行。
-            lst->erase(node.iter);
+            lst->erase(node);
         }
 
 
@@ -111,15 +109,13 @@ class adlist: public BaseStruct{
             return adlistIter(lst->end());            
 
         }
+};
 
 
 
-
-
-
-
-
-
-
-
+bool operator==(adlist::adlistIter &lhs, adlist::adlistIter &rhs){
+    return lhs == rhs;
 }
+
+
+#endif

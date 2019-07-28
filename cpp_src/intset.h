@@ -1,6 +1,6 @@
 #ifndef __INTSET_H
 #define __INTSET_H
-#endif
+
 #include <stdint.h>
 #include <sys/types.h>
 #include <vector>
@@ -298,8 +298,6 @@ class intset: public BaseStruct{
 };
 
 
-
-
 int intsetmatch(void*, void*);
 
 
@@ -308,12 +306,4 @@ int intsetmatch(void*, void*);
 // class ArrayInt64: public ArrayBase{};
 
 
-
-
-
-
-
-
-
-
-
+#endif

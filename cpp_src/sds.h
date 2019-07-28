@@ -1,3 +1,6 @@
+#ifndef __SDS_H__
+#define __SDS_H__
+
 #include <iostream>
 #include <string.h>
 #include <stdio.h>
@@ -408,3 +411,4 @@ sdshdr* sdsjoin(char **argv, int argc, char *sep);
 
 
 
+#endif

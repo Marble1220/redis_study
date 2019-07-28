@@ -1,3 +1,6 @@
+#ifndef __OBJECT_H__
+#define __OBJECT_H__
+
 #include "sds.h"
 
 // 基本类型分类底层数据结构(BaseStruct)和对象(BaseObject)
@@ -25,3 +28,6 @@ class BaseObject{
 
         virtual bool match(BaseObject*) const = 0;
 };
+
+
+#endif
