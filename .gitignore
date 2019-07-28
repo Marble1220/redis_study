@@ -5,3 +5,4 @@ temp*
 /cpp_src/*.o
 /cpp_src/.fuse*
 /cpp_src/testadlist.cpp
+/cpp_src/*.py

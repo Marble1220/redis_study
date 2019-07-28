@@ -18,6 +18,7 @@
 class BaseObject{
     private:
         uint8_t object_type;
+        int ref;
         
     public:
         BaseObject() = default;
@@ -26,8 +27,18 @@ class BaseObject{
 
         virtual sdshdr* get_value() const = 0;
 
-        virtual bool match(BaseObject*) const = 0;
+        virtual int match(BaseObject*) const = 0;
+        
 };
+
+
+static void decrRefCount(BaseObject*){};     // 引用计数-1 如果为0 回收
+
+
+
+
+
+
 
 
 #endif

@@ -11,4 +11,13 @@ class BaseStruct{
         virtual size_t length() const = 0;
 };
 
+
+typedef struct{
+    double min, max;
+    int minex, maxex;   //开闭标示
+}rangespec;
+
+
+
+
 #endif
