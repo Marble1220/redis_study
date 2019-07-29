@@ -25,24 +25,23 @@ class skiplistLevel{
     friend class skiplistNode;
     friend class skiplist;
     private:
+
+    public:
         skiplistNode *forward;  // 前进指针
         unsigned int span;      // 跨度
-    public:
         skiplistLevel(): forward(nullptr), span(0) {};
 };
 
 
 class skiplistNode{
-    friend class skiplist;
+    // friend class skiplist;
 
-    private:
+    public:
         BaseObject *obj;
         double score;
         skiplistNode *backward;
         skiplistLevel *level;
-
-    public:
-        skiplistNode(int _level, double _score, BaseObject *_obj): score(_score), obj(_obj){
+        skiplistNode(int _level, double _score, BaseObject *_obj):score(_score), obj(_obj){
             this->level = new skiplistLevel[_level];
         };
         
@@ -59,12 +58,13 @@ class skiplistNode{
 
 class skiplist: public BaseStruct{
     private:
-        skiplistNode *header, *tail;
         unsigned long _length;
-        int level;
 
     public:
-        skiplist(): level(1), _length(0){
+        skiplistNode *header, *tail;
+        int level;
+
+        skiplist():BaseStruct(SKIPLISTSTRUCT), level(1), _length(0){
             header = new skiplistNode(SKIPLIST_MAXLEVEL, 0, nullptr);
             tail = nullptr;
         }
@@ -80,7 +80,7 @@ class skiplist: public BaseStruct{
             }   
         }
 
-        size_t length(){return _length;};
+        size_t length() const {return _length;};
         
         
         // 创建一个成员为obj 分值为score的新节点并插入 返回生成的节点

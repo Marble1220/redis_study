@@ -89,13 +89,15 @@ int skiplist::slDelete(double score, BaseObject *obj){
 
     for (int i = level-1; i >= 0; i--){
         while (x->level[i].forward && (x->level[i].forward->score <score || (x->level[i].forward->score == score && x->level[i].forward->obj->match(obj) < 0))){
+            // cout << *(x->level[i].forward->obj->get_value()) << endl;
             x = x->level[i].forward;
         }
         update[i] = x;
     }
 
     x = x->level[0].forward;
-    if (x && score == x->score && x->obj->match(obj)){
+
+    if (x && score == x->score && (x->obj->match(obj) == 0)){
         slDeleteNode(x, update);
         delete x;
         return 1;
@@ -116,7 +118,7 @@ int skiplist::slIsInRange(rangespec *range){
     if (x == nullptr || !slValueGteMin(x->score, range))
         return 0;
     x = header->level[0].forward;
-    if (x == nullptr || slValueLteMax(x->score, range))
+    if (x == nullptr || !slValueLteMax(x->score, range))
         return 0;
     return 1;
 }
@@ -154,15 +156,20 @@ unsigned long skiplist::slGetRank(double score, BaseObject *obj){
     skiplistNode *x;
 
     unsigned long rank = 0;
-
+    cout << "test get rank: " << endl;
     x = header;
 
     for (int i = level-1; i >= 0; i--){
+        cout << "cyle for is " << i << endl;
         while (x->level[i].forward && (x->level[i].forward->score <score || (x->level[i].forward->score == score && x->level[i].forward->obj->match(obj) <= 0))){
+            cout << x->level[i].forward->score << endl;
             rank += x->level[i].span;
             x = x->level[i].forward;
         }
-    if (x->obj && x->obj->match(obj)) return rank;
+    if (x->obj && (x->score == score) && (x->obj->match(obj) == 0)) {
+        cout << x->score << " " << *(x->obj->get_value()) << endl;
+        return rank;
+        }
     }
     return 0;
 }
