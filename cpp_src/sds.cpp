@@ -4,7 +4,7 @@
 
 
 
-sdshdr::sdshdr(const char *init, size_t initlen): len(initlen), free(0){
+sdshdr::sdshdr(const char *init, size_t initlen):BaseStruct(SDSSTRUCT), len(initlen), free(0){
     buf = alloc.allocate(initlen+1);
     // auto temp = buf;
     // for (int i = 0; i < initlen; i++)
@@ -14,16 +14,18 @@ sdshdr::sdshdr(const char *init, size_t initlen): len(initlen), free(0){
     buf[initlen] = '\0';
 };
 
+
+
 sdshdr::sdshdr(const char *init): sdshdr(init, strlen(init)) {};
 sdshdr::sdshdr(): sdshdr("", 0) {};
-sdshdr::sdshdr(const sdshdr& other): len(other.len), free(0){
+sdshdr::sdshdr(const sdshdr& other):BaseStruct(SDSSTRUCT), len(other.len), free(0){
     buf = alloc.allocate(len+1);
     memcpy(buf, other.buf, other.len);
     buf[len] = '\0';
 
 }
 
-sdshdr::sdshdr(long long value): free(0){
+sdshdr::sdshdr(long long value):BaseStruct(SDSSTRUCT), free(0){
     char temp_buf[SDS_LLSTR_SIZE];
     int addlen = sdsll2str(temp_buf, value);
     buf = alloc.allocate(addlen+1);
@@ -37,7 +39,7 @@ sdshdr::sdshdr(long long value): free(0){
 
 
 sdshdr& sdshdr::operator=(const sdshdr& rhs){
-    cout << "operator=" << endl;
+    // cout << "operator=" << endl;
     if (this->buf == rhs.get_buf())
         return *this;
     if (len + free >= rhs.len)
@@ -76,6 +78,229 @@ sdshdr& sdshdr::operator+=(const sdshdr& rhs){
 sdshdr& sdshdr::operator+=(const char *t){
     this->sdscatlen(t, strlen(t));
     return *this;
+}
+
+
+
+
+void sdshdr::sdsclear() {
+    //惰性删除
+    free += len;
+    len = 0;
+    buf[0] = '\0';
+}
+
+sds sdshdr::sdsMakeRoomFor(size_t addlen) {    
+
+    size_t newlen;
+
+    if (free > addlen) {
+
+        return buf;
+    }
+    newlen = len + addlen;
+
+    if (newlen < SDS_MAX_PREALLOC)
+        newlen *= 2;
+    else
+        newlen += SDS_MAX_PREALLOC;
+    
+
+    auto newbuf = alloc.allocate(newlen + 1);
+    memcpy(newbuf, buf, len);
+    newbuf[len] = '\0';
+    alloc.deallocate(buf, len+free+1);
+    
+    free = newlen - len;
+    buf = newbuf;
+
+    return buf;
+
+}
+
+
+sds sdshdr::sdsRemoveFreeSpace() {
+
+    if (free == 0) return buf;
+    auto newbuf = alloc.allocate(len+1);
+    memcpy(newbuf, buf, len+1);
+    alloc.deallocate(buf, len+1);
+    buf = newbuf;
+    free = 0;
+    return buf;
+}
+
+
+void sdshdr::sdsIncrLen(int incr){
+
+    assert(free >= incr);
+
+    len += incr;
+    free -= incr;
+
+    buf[len] = '\0';
+}
+
+
+sds sdshdr::sdsgrowzero(size_t len_){
+
+    size_t totlen, curlen = len;
+
+    if (len_ <= curlen) return buf;
+
+    buf = sdsMakeRoomFor(len_ - curlen);
+
+    std::uninitialized_fill_n(buf+curlen, (len_ - curlen), 0);
+    buf[len_] = '\0';
+    totlen = len + free;
+    len = len_;
+    free = totlen - len;
+
+    return buf;
+}
+
+
+sds sdshdr::sdscatlen(const void *t, size_t addlen){
+
+    size_t curlen = len;
+    char *temp_buf;
+    char temp_[64];
+    bool flag = false;
+    if (addlen < 64)
+        temp_buf = temp_;
+    else{
+        temp_buf = alloc.allocate(addlen+1);
+        flag = true;
+    }
+
+    memcpy(temp_buf, t, addlen);
+    
+    auto s = sdsMakeRoomFor(addlen);
+
+    memcpy(s+curlen, temp_buf, addlen);
+
+    len = len + addlen;
+    free -= addlen;
+    s[len] = '\0';
+
+    if (flag)
+        alloc.deallocate(temp_buf, addlen+1);
+    return s;
+}
+
+sds sdshdr::sdscpylen(const char* t, size_t addlen){
+    //将t的前addlen个字符复制到sds中， 并在结尾加'/0‘
+    //如果len少于addlen， 扩展
+
+    size_t totlen = len + free;
+    if (totlen < addlen){
+        sdsMakeRoomFor(addlen - totlen);
+        totlen = len + free;
+    }
+
+    memcpy(buf, t, addlen);
+    buf[addlen] = '\0';
+    len = addlen;
+    free = totlen - len;
+    
+    return buf;
+}
+
+
+sds sdshdr::sdstrim(const char *cset){
+
+
+    char *start, *end, *sp, *ep;
+    size_t newlen;
+
+    sp = start = buf;
+    ep = end = buf+len-1;
+
+    while (sp <= end && strchr(cset, *sp)) sp++;
+    while (ep > start && strchr(cset, *ep)) ep--;
+
+    newlen = (sp > ep) ? 0 : (ep-sp+1);
+
+    if (buf != sp) memmove(buf, sp, newlen);
+
+    buf[len] = '\0';
+    free = free + len - newlen;
+    len = newlen;
+
+    return buf;
+}
+
+
+void sdshdr::sdsrange(int start, int end){
+
+    size_t newlen;
+    if (len == 0) return ;
+    if (start < 0){
+        start = len+start;
+        if (start < 0) start = 0;
+    }
+
+    if (end < 0){
+        end = len + end;
+        if (end < 0) end = 0;
+    }
+
+    newlen = (start > end) ? 0 : (end - start + 1);
+    if (newlen != 0){
+        if (start >= (signed) len){
+            newlen = 0;
+        }else if(end > (signed)len){
+            end = len-1;
+            newlen = (start > end) ? 0 : (end-start)+1;
+        }
+    } else{
+        start = 0;
+    }
+
+    if (start && newlen) memmove(buf, buf+start, newlen);
+
+    buf[newlen] = '\0';
+    free = free + len - newlen;
+    len = newlen;
+}
+
+
+void sdshdr::sdstolower() const {
+
+    for (int i = 0; i < len; i++) buf[i] = tolower(buf[i]);            
+}
+
+void sdshdr::sdstoupper() const {
+
+    for(int i = 0; i < len; i++) buf[i] = toupper(buf[i]);
+}
+
+
+
+int sdshdr::sdscmp(const sdshdr& s2) const{
+
+    size_t len2, minlen;
+    int cmp;
+    len2 = s2.sdslen();
+    minlen = (len < len2)? len: len2;
+    cmp = memcmp(buf, s2.buf, minlen);
+
+    if (cmp == 0) return len-len2;
+    
+    return cmp;
+}
+
+
+sds sdshdr::sdsmapchars(const char *form, const char *to, size_t setlen){
+    for (size_t j = 0; j < len; j++){
+        for (size_t i = 0; i < setlen; i++){
+            if (buf[j] == form[i]){
+                buf[j] = to[i];
+                break;
+            }
+        }
+    }
+    return buf;
 }
 
 
