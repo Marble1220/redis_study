@@ -27,7 +27,6 @@ void adlist::adlistDelNode(adlistIter node){
 }
 
 adlist::adlistIter adlist::adlistGetBegin(){
-    cout << "get begin" << endl;
     return lst->begin();
 }
 
@@ -43,7 +42,6 @@ adlist::adlistIter adlist::adlistSearch(BaseObject *key){
     // 如果找到 返回对应的adlistiter
     // 否则返回end的adlistiter
     for (auto iter = lst->begin(); iter != lst->end(); iter++){
-        cout << "searchtest: " << *((*iter)->get_value()) << endl;
         if ((*iter)->match(key) == 0){
             return adlistIter(iter);
         }
@@ -51,3 +49,14 @@ adlist::adlistIter adlist::adlistSearch(BaseObject *key){
     return lst->end();            
 }
 
+adlist::adlistIter adlist::adlistIndex(int index){
+    int len = length();
+    if (index < 0) index = len + index;
+    if (index < 0 || index >= len) return lst->end();
+
+    auto iter = lst->begin();
+    for (int i = 0; i < index; i++) {
+        iter++;
+    }
+    return iter;
+}

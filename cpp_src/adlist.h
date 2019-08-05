@@ -8,6 +8,7 @@
 
 
 using std::list;
+extern struct sharedObjectsStruct shared;
 
 // typedef list<BaseObject*>::iterator iterator;
 
@@ -52,15 +53,16 @@ using std::list;
 
 class adlist: public BaseStruct{
     private:
-        list<BaseObject*> *lst;
 
     public:
+        list<BaseObject*> *lst;
+
         typedef list<BaseObject*>::iterator adlistIter;
         adlist():BaseStruct(ADLISTSTRUCT){lst = new list<BaseObject*>();};
         ~adlist(){
             for(auto &item: *lst){
-                cout << "del: " << *(item->get_value()) << endl;
-                delete item;
+                // cout << "del: " << item->ref << endl;
+                decrRefCount(item);
             }
             delete lst;
         };
@@ -81,6 +83,7 @@ class adlist: public BaseStruct{
         
         adlistIter adlistGetEnd();
         adlistIter adlistSearch(BaseObject *key);
+        adlistIter adlistIndex(int index); // 根据index返回iter
 };
 
 
