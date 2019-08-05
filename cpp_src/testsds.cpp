@@ -121,6 +121,7 @@ int main(){
 
     cout << test9->length() << endl;
     delete test9;
+    cout << test9->struct_type << endl;
 
 
 }

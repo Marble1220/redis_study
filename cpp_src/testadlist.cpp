@@ -4,9 +4,9 @@ using std::list;
 int main(){
     BaseObject *base1, *base2, *base3;
     adlist::adlistIter begin, end;
-    base1 = new TestObject("list2test1");
-    base2 = new TestObject("list2test2");
-    base3 = new TestObject("list2test3");
+    base1 = new StringObject("list2test1");
+    base2 = new StringObject("list2test2");
+    base3 = new StringObject("list2test3");
 
     // adlist *list1;
     auto list1 = new adlist();
@@ -26,15 +26,15 @@ int main(){
     adlist::adlistIter two = list1->adlistSearch(base1);
     if(two == list1->adlistGetEnd()) cout << "OK" << endl;
     else cout << *((*two)->get_value()) << endl;
-    adlist::adlistIter three = list1->adlistSearch(new TestObject("base3"));
+    adlist::adlistIter three = list1->adlistSearch(new StringObject("base3"));
     if(three == list1->adlistGetEnd()) cout << "OK" << endl;
     else cout << *((*three)->get_value()) << endl;
-    adlist::adlistIter none = list1->adlistSearch(new TestObject("none"));
+    adlist::adlistIter none = list1->adlistSearch(new StringObject("none"));
     if(none == list1->adlistGetEnd()) cout << "OK" << endl;
     else cout <<"error: " << *((*none)->get_value()) << endl;
 
 
-    list1->adlistInsertNode(two, new TestObject("base3"), 0);
+    list1->adlistInsertNode(two, new StringObject("base3"), 0);
     begin = list1->adlistGetBegin();
     end = list1->adlistGetEnd();
     while (begin != end){
@@ -44,7 +44,7 @@ int main(){
 
     cout << endl;
     auto one = list1->adlistGetBegin();
-    list1->adlistInsertNode(one, new TestObject("base5"), 1);
+    list1->adlistInsertNode(one, new StringObject("base5"), 1);
     begin = list1->adlistGetBegin();
     end = list1->adlistGetEnd();
     while (begin != end){
@@ -82,8 +82,12 @@ int main(){
         cout << *((*begin)->get_value()) << endl;
         ++begin;
     }
-    list1->adlistAddNodeHead(new TestObject("asdf"));
-    list1->adlistAddNodeTail(new TestObject("list1test1"));
+    list1->adlistAddNodeHead(new StringObject("asdf"));
+    list1->adlistAddNodeTail(new StringObject("list1test1"));
+
+    for (int i = 0; i < 100; i++) list1->adlistAddNodeHead(new StringObject((long long)i));
+    // delete list1;
+
     cout << list1->length() << endl;
     begin = list1->adlistGetBegin();
     end = list1->adlistGetEnd();
@@ -91,22 +95,13 @@ int main(){
         cout << *((*begin)->get_value()) << endl;
         ++begin;
     }
-    delete list1;
-
-
-    cout << "start del list1" << endl;
-    delete list1;
-    cout << "del list1 ok" << endl;
+    createSharedObjects();
+    // delete list1;
+    cout << endl;
+    cout << *((*list1->adlistIndex(101))->get_value()) << endl;
+    auto iter = list1->adlistGetEnd();
+    iter--;
+    cout << *((*iter)->get_value()) << endl;
 
     
-    
-
-
-
-
-
-
-
-
-
 }
