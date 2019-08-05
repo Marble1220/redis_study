@@ -199,7 +199,7 @@ class intset: public BaseStruct{
         uint32_t encoding;
         
     public:
-        intset(): encoding(INTSET_ENC_INT16), contents(new ArrayInt<uint16_t>()) {} ;
+        intset(): BaseStruct(INTSETSTRUCT), encoding(INTSET_ENC_INT16), contents(new ArrayInt<uint16_t>()) {} ;
 
         ~intset(){delete contents;};
         
