@@ -24,6 +24,7 @@
 // 用于python端和cpp端通信 
 #define PY_ERR 0
 #define PY_OK 1
+#define PY_EXIST 2
 
 // 用于在控制链表结构的插入和删除的头尾
 #define HEAD 0
@@ -61,5 +62,9 @@ static long long timeInMilliseconds(void) {
 
 unsigned int getLRUClock(void);
 
+// 检查字符串能否转换为整形
+// 可以并转换成功将返回1， 并将值保存在llvalue中
+// 否则返回0
+int string2ll(const char *s, size_t slen, long long *value);
 
 #endif
