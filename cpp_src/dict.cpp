@@ -451,3 +451,38 @@ int dict::_dictKeyIndex(StringObject *key){
     // cout << "ultimate insert table: " << table << " index: " << idx << endl;
     return idx;
 }
+
+dictEntry* dict::dictGetRandomKey(){
+    dictEntry *he, *orighe;
+    unsigned int h;
+    int listlen, listele;
+
+    if (length() == 0) return nullptr;
+
+    if (rehashidx != -1) _dictRehashStep();
+
+    if (rehashidx != -1){
+        do{
+            h = random() % (ht[0].size + ht[1].size);
+            he = (h >= ht[0].size)? ht[1].table[h - ht[0].size]: ht[0].table[h];
+        }while (he == nullptr);
+    }else{
+        do{
+            h = random() & ht[0].sizemask;
+            he = ht[0].table[h];
+        }while(he == nullptr);
+    }
+    listlen = 0;
+    orighe = he;
+    while (he){
+        he = he->next;
+        listlen++;
+    }
+    listele = random() % listlen;
+
+    he = orighe;
+
+    while (listele--) he = he->next;
+    return he;
+
+}

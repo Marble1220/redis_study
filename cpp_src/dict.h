@@ -56,10 +56,12 @@ class dictEntry{
         dictEntry(): dictEntry(nullptr) {};
 
         ~dictEntry(){
-            delete key; 
+            // delete key;
+            decrRefCount(key); 
             key = nullptr;
             if (v != nullptr){
-            delete v;
+            // delete v;
+            decrRefCount(v);
             v = nullptr;
             }
         };
@@ -200,6 +202,8 @@ class dict: public BaseStruct{
 
         // 清空字典上的所有哈希表节点 并且重置字典属性
         void dictEmpty(void(callback)(void*));
+
+        dictEntry* dictGetRandomKey();
 
 
 
