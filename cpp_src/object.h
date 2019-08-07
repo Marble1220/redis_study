@@ -9,6 +9,7 @@
 #include "sds.h"
 
 
+
 // 基本类型分类底层数据结构(BaseStruct)和对象(BaseObject)
 // 所有对象都是BaseObject的直接派生类, 内部保存所使用的底层数据结构类和其信息以及自己的类别信息
 // 基类定义统一接口, 子类根据情况实现
@@ -28,7 +29,7 @@ static uint32_t hash_function_seed = 5381;
 //共享对象
 class StringObject;
 struct sharedObjectsStruct{
-    StringObject *none, *wrap, 
+    StringObject *none, *wrap, *space, 
     
     *integers[SHARED_INTEGERS];
 };
@@ -139,17 +140,94 @@ class ListObject: public BaseObject{
         int ListObjectSet(int index, BaseObject* value);
 
         // 弹出元素， where决定从表头还是表尾
+        // 调用者负责回收返回sdshdr的内存, 返回none也要释放内存
         sdshdr* ListObjectPop(int where);
 
         // nums为删除的数量， 为负数从尾开始， 正数从头开始， 0全部删除
         // 返回成功删除的数量
         int ListObjectRem(int nums, BaseObject* value);
 
+};
 
 
+#define SET_INTSET_MAX 512
+
+class SetObject: public BaseObject{
+    public:
+        SetObject(BaseObject* value);
+        ~SetObject();
+
+        sdshdr* get_value() const;
+        int match(BaseObject* ) const;
+        unsigned hash() const;
+
+        // 判断value是否存在与集合， 存在返回1, 不在返回0
+        int SetObjectExist(BaseObject* value);
+        // 将value添加到set中， 成功返回py_ok， 失败返回py_err
+        int SetObjectAdd(BaseObject* value);
+        // 返回保存的元素个数
+        int SetObjectLen();
+        // 删除set中给定的元素, 成功返回py_ok, 失败返回py_err
+        int SetObjectRem(BaseObject* value);
+        // 以sdshdr的形式随机返回并删除一个保存的元素
+        // 为空返回shared.none, 失败返回nullptr
+        // 调用者负责回收返回sdshdr的内存, 返回none也要释放内存
+        sdshdr* SetObejctPop();
+
+    private:
+
+        //将类型从整数集合升级为dict
+        void SetObjectUpgrade();
+        
+};
+
+class dictIterator;
+class dictEntry;
+class HashObject: public BaseObject{
+    private:
+        dictIterator *keyiter;
+        dictIterator *valiter;
+    public:
+        HashObject();
+        ~HashObject();
 
 
+        unsigned int hash() const;
 
+        sdshdr* get_value() const;
+
+        int match(BaseObject*) const;
+
+
+        // 返回key对应的v, key不存在返回shared.none;
+        BaseObject* HashGet(StringObject* key);
+
+        //判断key的是否在hash中， 存在返回1 不存在返回0
+        int HashExists(StringObject* key);
+        
+        // 将给定的k, v设置到hash
+        // 如果存在旧值， 旧值将被覆盖
+        // 如果是新添加返回1， 存在旧值返回0
+        int HashSet(StringObject* key, BaseObject* value);
+
+        // 删除给定的key所在的dictentry， 成功返回PY_OK, 因不存在而失败返回py_err
+        int HashDel(StringObject* key);
+
+        int HashLen();
+
+        // 以下两个函数分别返回hash全部的key或value
+        // 这两个函数有一个共同特点
+        // 一般来说， 起将必定会被调用多次
+        // 每次返回hash中的一个对应元素(k or v)
+        // 直到迭代完毕返回nullptr
+        // 注意  线程不安全, 如果两个线程同时调用， 则不保证返回结果正确(基本肯定不正确)
+        // 可以设置dict保存对应线程的迭代信息(暂时先不弄了)
+        sdshdr* HashKeys();
+        sdshdr* HashValues();
+
+    private:
+        // 传入一个iter迭代器指针, 处理对应, 返回sdshdr*或nullptr
+        dictEntry* _HashIter(dictIterator* &);
 };
 
 

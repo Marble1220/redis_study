@@ -165,8 +165,10 @@ int SetObject::SetObjectRem(BaseObject *value){
 }
 
 sdshdr* SetObject::SetObejctPop(){
-    if (SetObjectLen() == 0) return shared.none->get_value();
-
+    if (SetObjectLen() == 0){
+        incrRefCount(shared.none); 
+        return shared.none->get_value();
+    }
     sdshdr* res;
 
     if (ptr->struct_type == DICTSTRUCT){

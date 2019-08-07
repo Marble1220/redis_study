@@ -150,7 +150,7 @@ int dict::dictReplace(StringObject *key, BaseObject *val){
     if (dictAdd(key, val) == DICT_OK) return 1;
 
     entry = dictFind(key);
-    delete entry->v;
+    decrRefCount(entry->v);
     entry->v = val;
     // delete auxentry.v;  // v指向一个object 调用object的析构函数
 

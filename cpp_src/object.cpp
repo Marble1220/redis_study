@@ -42,6 +42,7 @@ unsigned long long estimateObjectIdleTime(BaseObject *obj){
 void createSharedObjects(){
     shared.none = new StringObject("none\r\n");
     shared.wrap = new StringObject("\r\n");
+    shared.space = new StringObject(" ");
 
     for (int i = 0; i < SHARED_INTEGERS; i++){
         shared.integers[i] = new StringObject((long long) i);
