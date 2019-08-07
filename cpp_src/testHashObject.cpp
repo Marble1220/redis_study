@@ -37,4 +37,3 @@ int main(){
     hash1->HashSet(new StringObject("0"), new StringObject("asdf"));
     cout << hash1->get_value()->get_buf() << endl;
 }
-

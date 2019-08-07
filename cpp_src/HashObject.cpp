@@ -87,7 +87,6 @@ sdshdr* HashObject::get_value() const{
     }
     delete iter;
     return res;
-
 }
 
 int HashObject::match(BaseObject* other) const{
