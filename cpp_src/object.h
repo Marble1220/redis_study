@@ -23,7 +23,7 @@
 #define LISTOBJECT 26
 #define SETOBJECT 27
 #define HASHOBJECT 28
-#define SSETOBJECT 29
+#define ZSETOBJECT 29
 
 static uint32_t hash_function_seed = 5381;
 //共享对象
@@ -228,6 +228,52 @@ class HashObject: public BaseObject{
     private:
         // 传入一个iter迭代器指针, 处理对应, 返回sdshdr*或nullptr
         dictEntry* _HashIter(dictIterator* &);
+};
+
+class dict;
+class ZsetObject: public BaseObject{
+    public:
+        dict *dict_ptr;
+        ZsetObject();
+        ~ZsetObject();
+
+        // 调用者回收sdshdr的内存
+        sdshdr* get_value() const;
+        
+        int match(BaseObject*) const;
+        unsigned hash() const;
+
+        // 向zset中添加元素和分值
+        // 如果元素不存在， 添加并返回1
+        // 如果元素已存在, 则更新分值并返回0
+        int ZsetAdd(StringObject* value, double score);
+        // 返回集合中元素个数
+        int ZsetLen();
+        // 返回zset中区间范围内的元素个数
+        int ZsetCount(rangespec);
+        // 根据区间返回zset中的值
+        // 将值按大小顺序全部返回
+        // 将返回一个sdshdr， 格式为 长度+实际字节
+        // 调用者负责回收其内存
+        sdshdr* ZsetRangeByScore(rangespec);
+        // 返回对应成员的rank, 如果不存在返回-1
+        int ZsetRank(StringObject* );
+        // 根据rank返回成员, rank起始为1
+        // 如果不存在返回nullptr
+        BaseObject* ZsetGetByRank(int rank);
+        // 将给定成员从集合中删除， 成功返回1， 因不存在而失败返回0
+        int ZsetRem(StringObject* );
+        // 给定成员 返回其分值
+        double ZsetScore(StringObject* );
+
+
+
+
+
+
+
+
+        
 };
 
 
