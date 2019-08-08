@@ -24,7 +24,10 @@ int HashObject::HashSet(StringObject* key, BaseObject* value){
     auto temp = static_cast<dict*>(ptr);
     // if (temp->dictAdd(key, value) == DICT_OK) return PY_OK;
     // else return PY_ERR;
-    return temp->dictReplace(key, value);
+    auto res = temp->dictReplace(key, value);
+    incrRefCount(value);
+    if (res) incrRefCount(key);
+    return res;
 }
 
 int HashObject::HashDel(StringObject* key){
