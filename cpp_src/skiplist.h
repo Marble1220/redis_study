@@ -46,7 +46,8 @@ class skiplistNode{
         };
         
         ~skiplistNode(){
-            decrRefCount(obj);    
+            if (obj)
+                decrRefCount(obj);    
             delete[] level;
         };
 
