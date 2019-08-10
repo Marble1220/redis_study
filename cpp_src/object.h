@@ -53,7 +53,7 @@ class BaseObject{
         BaseObject() = default;
         BaseObject(int type): object_type(type), ref(1), lru(getLRUClock()){};
 
-        virtual ~BaseObject(){cout << "awsl" << endl;};
+        virtual ~BaseObject(){};
 
         virtual sdshdr* get_value() const = 0;
 
@@ -70,6 +70,7 @@ class BaseObject{
 
 class StringObject: public BaseObject{
     public:
+        StringObject():BaseObject(STRINGOBJECT){ptr = new sdshdr();};
         StringObject(const char *s, size_t len):BaseObject(STRINGOBJECT){
             ptr = new sdshdr(s, len);
         }
@@ -86,7 +87,7 @@ class StringObject: public BaseObject{
         }
 
         ~StringObject(){
-            // cout << get_value()->get_buf() << endl;
+            cout << get_value()->get_buf() << endl;
             delete ptr;
         }
 
@@ -265,14 +266,6 @@ class ZsetObject: public BaseObject{
         int ZsetRem(StringObject* );
         // 给定成员 返回其分值
         double ZsetScore(StringObject* );
-
-
-
-
-
-
-
-
         
 };
 

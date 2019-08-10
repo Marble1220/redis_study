@@ -8,8 +8,8 @@
 #include "object.h"
 
 
-#define DICT_OK 0
-#define DICT_ERR 1
+#define DICT_OK 1
+#define DICT_ERR 0
 #define DICT_HT_INITIAL_SIZE 4
 
 class dictEntry;
@@ -204,6 +204,8 @@ class dict: public BaseStruct{
         void dictEmpty(void(callback)(void*));
 
         dictEntry* dictGetRandomKey();
+        // 从字典随机返回count个enery到dictentry， 返回实际des中的个数
+        int dictGetRandomKeys(dictEntry **des, int count);
 
 
 

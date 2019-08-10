@@ -157,11 +157,11 @@ int SetObject::SetObjectRem(BaseObject *value){
             int success;
             auto temp = static_cast<intset*>(ptr);
             temp->intsetRemove(temp_long, &success);
-            if (success) return 1;
+            if (success) return PY_OK;
         }
     }
 
-    return 0;
+    return PY_ERR;
 }
 
 sdshdr* SetObject::SetObejctPop(){

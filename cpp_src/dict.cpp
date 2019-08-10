@@ -486,3 +486,27 @@ dictEntry* dict::dictGetRandomKey(){
     return he;
 
 }
+
+
+int dict::dictGetRandomKeys(dictEntry **des, int count){
+    int stored = 0;
+    if (length() < count) count = length();
+    while (stored < count){
+        for(int j = 0; j < 2; j++){
+            unsigned int i = random() & ht[j].sizemask;
+            int size = ht[j].size;
+            while (size--){
+                dictEntry *he = ht[j].table[i];
+                while (he){
+                    *des = he;
+                    des++;
+                    he = he->next;
+                    stored++;
+                    if (stored == count) return stored;
+                }
+                i = (i+1) & ht[j].sizemask;
+            }
+        }
+    }
+    return stored;
+}

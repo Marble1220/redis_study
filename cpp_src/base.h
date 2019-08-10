@@ -5,6 +5,11 @@
 #include <sys/types.h>
 #include <ctime>
 #include <sys/time.h>
+#include <cstdlib>
+
+#include <exception>
+#include <iostream>
+
 
 #define SDSSTRUCT  101
 #define INTSETSTRUCT 102
@@ -35,6 +40,9 @@
 #define SHARED_INTEGERS 10000
 
 // 记录内存使用的全局变量
+#define MEM_HEAD sizeof(size_t)
+
+static unsigned long use_memory = 0;
 
 
 class BaseStruct{
@@ -62,9 +70,17 @@ static long long timeInMilliseconds(void) {
 
 unsigned int getLRUClock(void);
 
+
 // 检查字符串能否转换为整形
 // 可以并转换成功将返回1， 并将值保存在llvalue中
 // 否则返回0
 int string2ll(const char *s, size_t slen, long long *value);
 
+// 重载的new和delete用于内存统计
+void *operator new(size_t size);
+void *operator new[](size_t size);
+void operator delete(void *mem);
+void operator delete[](void *mem);
+
+size_t get_used_memory();
 #endif

@@ -62,3 +62,46 @@ int string2ll(const char *s, size_t slen, long long *value){
     return 1;
 
 }
+
+
+void *operator new(size_t size){
+    size = size+MEM_HEAD;
+    // std::cout << "call me new: " << size << std::endl;
+    
+    if (void *mem = malloc(size)) {
+        use_memory += size;
+        size_t *m = (size_t*)mem;
+        *m = size;
+        return (char*)mem+MEM_HEAD;
+    }
+    else throw std::bad_alloc();
+};
+void *operator new[](size_t size){
+    size = size+MEM_HEAD;
+    
+    if (void *mem = malloc(size)) {
+        use_memory += size;
+        size_t *m = (size_t*)mem;
+        *m = size;
+        return (char*)mem+MEM_HEAD;
+    }
+    else throw std::bad_alloc();
+};
+void operator delete(void *mem){
+    // std::cout << *(int*)mem << std::endl;
+    char *m = (char*)mem;
+    m -= MEM_HEAD;
+    use_memory -= *(size_t*)m;
+    // std::cout << "call me delete: " << *(size_t*)m << std::endl;
+
+    free((void*)m);
+};
+void operator delete[](void *mem){
+    char *m = (char*)mem;
+    m -= MEM_HEAD;
+    use_memory -= *(size_t*)m;
+
+    free((void*)m);
+};
+
+size_t get_used_memory(){return use_memory;};

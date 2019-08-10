@@ -5,6 +5,7 @@
 
 
 sdshdr::sdshdr(const char *init, size_t initlen):BaseStruct(SDSSTRUCT), len(initlen), free(0){
+    // cout << "distribution str mem: " << endl;
     buf = alloc.allocate(initlen+1);
     // auto temp = buf;
     // for (int i = 0; i < initlen; i++)
