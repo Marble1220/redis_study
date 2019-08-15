@@ -115,6 +115,6 @@ sdshdr* StringObject::getrangefromStringObject(int start, int end){
     
     res = new sdshdr();
     res->sdsgrowzero(reslen);
-    memcpy(res->get_buf(), temp->get_buf(), reslen);
+    memcpy(res->get_buf(), temp->get_buf()+start, reslen);
     return res;
 }

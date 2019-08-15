@@ -58,7 +58,17 @@ BaseObject* db::set_value(StringObject *key, int object_type, BaseObject* v){
     BaseObject *value;
 
     switch(object_type){
-        case STRINGOBJECT: value = new StringObject(); break;
+        case STRINGOBJECT: {
+            int i = atoi(v->get_value()->get_buf());
+            if (i >= 1 and i <= 9999){
+                value = shared.integers[i];
+                incrRefCount(value);
+            }
+            else{
+            value = new StringObject(v->get_value()->get_buf());    
+            }
+            break;
+            }
         case LISTOBJECT: value = new ListObject(); break;
         case SETOBJECT: value = new SetObject(v); break;
         case HASHOBJECT: value = new HashObject(); break;

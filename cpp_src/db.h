@@ -17,7 +17,7 @@ struct eliminatedele{
 
 class db{
     private:
-        bool lru=1;
+        bool lru=0;
     public:
         dict *val, *expires;
         eliminatedele eliminatepool[ELIMINATE_POOL_SIZE]{};
@@ -43,7 +43,7 @@ class db{
         long long get_expires(StringObject* key);
         // 将一个key和其对应的数据结构添加到数据库中
         // 如果key已存在， 则覆盖原来的key并重置起过期时间
-        // 成功返回创建的对偶指针， 失败返回nullptr
+        // 成功返回创建的对象指针， 失败返回nullptr
         BaseObject* set_value(StringObject* key, int object_type, BaseObject* value);
         // 得到与k对应的val， 如果key不存在返回nullptr
         BaseObject* get_value(StringObject* key);

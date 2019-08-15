@@ -91,15 +91,16 @@ BaseObject* ZsetObject::ZsetGetByRank(int rank){
 
 }
 
-double ZsetObject::ZsetScore(StringObject* value){
+sdshdr* ZsetObject::ZsetScore(StringObject* value){
     double res;
     auto dentry = dict_ptr->dictFind(value);
     if (dentry){
-        std::stringstream ss(dentry->v->get_value()->get_buf());
-        ss >> res;
-        return res;
+        // std::stringstream ss(dentry->v->get_value()->get_buf());
+        // ss >> res;
+        // return res;
+        return dentry->v->get_value();
     }
-    return -1;
+    return shared.none->get_value();
 }
 
 int ZsetObject::ZsetRem(StringObject* value){
@@ -145,6 +146,7 @@ sdshdr* ZsetObject::ZsetRangeByScore(rangespec range){
             auto temp_sds = sdshdr(len);
             res->sdscatlen(temp_sds.get_buf(), temp_sds.length());
         }
+        res->sdscatlen("\n", 1);
         res->sdscatlen(eptr->obj->get_value()->get_buf(), len);
         eptr = eptr->level[0].forward;
     }

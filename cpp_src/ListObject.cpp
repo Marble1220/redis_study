@@ -46,7 +46,7 @@ unsigned ListObject::hash() const{
 }
 
 
-int ListObject::ListObjectPush(BaseObject* value, int where){
+int ListObject::ListObjectPush(BaseObject* value, int where=1){
     adlist *temp = static_cast<adlist*>(ptr);
     try{
         if (where) temp->adlistAddNodeTail(value);
@@ -88,7 +88,6 @@ sdshdr* ListObject::ListObjectPop(int where){
     auto temp = static_cast<adlist*>(ptr);
     adlist::adlistIter iter;
     if ((temp->length()) == 0){
-        incrRefCount(shared.none);
         return shared.none->get_value();
     }
     if (where == HEAD) iter = temp->adlistGetBegin();

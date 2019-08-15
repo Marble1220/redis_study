@@ -57,7 +57,7 @@ class BaseStruct{
 
 typedef struct{
     double min, max;
-    int minex, maxex;   //开闭标示
+    int minex, maxex;   //开闭标示, 1开0闭
 }rangespec;
 
 //  返回以毫秒为单位的 UNIX 时间戳

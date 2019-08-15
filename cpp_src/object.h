@@ -1,7 +1,7 @@
 #ifndef __OBJECT_H__
 #define __OBJECT_H__
 
-#include <stdint.h>
+// #include <stdint.h>
 #include <sstream>
 #include <string>
 
@@ -29,7 +29,8 @@ static uint32_t hash_function_seed = 5381;
 //共享对象
 class StringObject;
 struct sharedObjectsStruct{
-    StringObject *none, *wrap, *space, 
+    StringObject *none, *wrap, *space, *err, *ok, *notexist, *typrerr, 
+    *exist, *unerr, *rangeout, 
     
     *integers[SHARED_INTEGERS];
 };
@@ -87,7 +88,7 @@ class StringObject: public BaseObject{
         }
 
         ~StringObject(){
-            cout << get_value()->get_buf() << endl;
+            // cout << get_value()->get_buf() << endl;
             delete ptr;
         }
 
@@ -111,6 +112,7 @@ class StringObject: public BaseObject{
 
         int StringObjectcat(sdshdr*);
 
+        // 需要自己回收内存
         sdshdr* getrangefromStringObject(int start, int end);
 
 
@@ -134,13 +136,13 @@ class ListObject: public BaseObject{
         // where 为0添加到头， 为1添加到尾
         int ListObjectPush(BaseObject *value, int where);
 
-        // 返回index位置的值, 如果为空返回nullptr
+        // 返回index位置的值, 如果范围超出返回none
         sdshdr* ListObjectIndex(int index);
 
         // 将index处的值设置为value， 成功返回py_ok, 失败返回py_err
         int ListObjectSet(int index, BaseObject* value);
 
-        // 弹出元素， where决定从表头还是表尾
+        // 弹出元素， where决定从表头还是表尾, 0为头1为尾
         // 调用者负责回收返回sdshdr的内存, 返回none也要释放内存
         sdshdr* ListObjectPop(int where);
 
@@ -264,8 +266,8 @@ class ZsetObject: public BaseObject{
         BaseObject* ZsetGetByRank(int rank);
         // 将给定成员从集合中删除， 成功返回1， 因不存在而失败返回0
         int ZsetRem(StringObject* );
-        // 给定成员 返回其分值
-        double ZsetScore(StringObject* );
+        // 给定成员 返回其分值 注意以字符串形式返回, 不存在返回none
+        sdshdr* ZsetScore(StringObject* );
         
 };
 
@@ -278,7 +280,7 @@ void incrRefCount(BaseObject*);
 //返回编码的字符串表示
 
 std::string strEncoding(int encoding);
-
+std::string strObjecttype(int type_);
 // 返回给定对象的空转时长
 unsigned long long estimateObjectIdleTime(BaseObject *obj);
 

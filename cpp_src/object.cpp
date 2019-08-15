@@ -30,6 +30,16 @@ std::string strEncoding(int encoding){
     }
 }
 
+std::string strObjecttype(int type_){
+    switch(type_){
+        case STRINGOBJECT: return "STRING";
+        case LISTOBJECT: return "LIST";
+        case SETOBJECT: return "SET";
+        case HASHOBJECT: return "HASH";
+        case ZSETOBJECT: return "ZSET";
+        default: return "UNKNOWN";
+    }
+}
 unsigned long long estimateObjectIdleTime(BaseObject *obj){
     unsigned long long lruclock = getLRUClock();
     if (lruclock >= obj->lru){
@@ -43,9 +53,15 @@ void createSharedObjects(){
     shared.none = new StringObject("none\r\n");
     shared.wrap = new StringObject("\r\n");
     shared.space = new StringObject(" ");
+    shared.err = new StringObject("err\r\n");
+    shared.ok = new StringObject("ok\r\n");
+    shared.notexist = new StringObject("key not exist\r\n");
+    shared.typrerr = new StringObject("type err\r\n");
+    shared.exist = new StringObject("value already exists\r\n");
+    shared.unerr = new StringObject("unknown error\r\n");
+    shared.rangeout = new StringObject("range out\r\n");
 
     for (int i = 0; i < SHARED_INTEGERS; i++){
         shared.integers[i] = new StringObject((long long) i);
-        
     }
 }
